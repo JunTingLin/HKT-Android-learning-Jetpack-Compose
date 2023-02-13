@@ -5,9 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,33 +24,21 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ColumnDemo() {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Box(
+        contentAlignment = Alignment.Center,
         modifier = Modifier
-            .fillMaxWidth()
             .fillMaxHeight()
+            .fillMaxWidth()
     ) {
         Box(
             modifier = Modifier
-                .background(Color.Yellow)
-                .fillMaxWidth()
-                .height(30.dp)
-        )
-
-        Box(
-            modifier = Modifier
+                .size(100.dp)
                 .background(Color.Green)
-                .fillMaxWidth()
-                .height(30.dp)
         )
-
-        Box(
-            modifier = Modifier
-                .background(Color.Red)
-                .fillMaxWidth()
-                .height(30.dp)
-        )
+        Box(modifier = Modifier
+            .padding(start = 100.dp, bottom = 100.dp)
+            .size(60.dp)
+            .background(Color.Red))
     }
 }
 
