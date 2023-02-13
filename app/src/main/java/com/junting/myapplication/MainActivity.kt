@@ -27,42 +27,45 @@ class MainActivity : ComponentActivity() {
 fun MixDemo() {
     ConstraintLayout(
         modifier = Modifier
-            .fillMaxHeight()
             .fillMaxWidth()
-    ) {
-        val (yellowBox, greenBox, redBox) = createRefs()
+            .padding(10.dp)
 
-        //對齊父容器
+    ) {
+        val (img, h1, h2) = createRefs()
+        Box(
+            modifier = Modifier
+                .size(100.dp)
+                .background(Color.Yellow)
+                .constrainAs(img) {
+
+                }
+
+        )
+        Box(
+            modifier = Modifier
+                .width(250.dp)
+                .height(30.dp)
+                .background(Color.Green)
+                .constrainAs(h1) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(h2.top)
+                    start.linkTo(img.end,20.dp)
+
+                }
+        )
         Box(modifier = Modifier
-            .size(100.dp)
-            .background(Color.Yellow)
-            .constrainAs(yellowBox) {
-                top.linkTo(parent.top)
+            .width(150.dp)
+            .height(30.dp)
+            .background(Color.Red)
+            .constrainAs(h2) {
+                top.linkTo(h1.bottom)
                 bottom.linkTo(parent.bottom)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
+                start.linkTo(h1.start)
+
+
             }
         )
 
-        //對齊父容器，加入 margin 間距
-        Box(modifier = Modifier
-            .size(50.dp)
-            .background(Color.Green)
-            .constrainAs(greenBox) {
-                top.linkTo(parent.top,150.dp)
-                bottom.linkTo(parent.bottom)
-                start.linkTo(parent.start,150.dp)
-                end.linkTo(parent.end)
-            })
-
-        //對齊其他元件，並加入 margin 間距
-        Box(modifier = Modifier
-            .size(50.dp)
-            .background(Color.Red)
-            .constrainAs(redBox) {
-                top.linkTo(greenBox.bottom)
-                end.linkTo(greenBox.end)
-            })
     }
 }
 
