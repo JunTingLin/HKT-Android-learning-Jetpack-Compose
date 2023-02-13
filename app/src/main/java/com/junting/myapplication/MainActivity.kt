@@ -17,28 +17,41 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ColumnDemo()
+            MixDemo()
         }
     }
 }
 
 @Composable
-fun ColumnDemo() {
-    Box(
-        contentAlignment = Alignment.Center,
+fun MixDemo() {
+    Row(
         modifier = Modifier
-            .fillMaxHeight()
             .fillMaxWidth()
+            .padding(10.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
                 .size(100.dp)
-                .background(Color.Green)
-        )
-        Box(modifier = Modifier
-            .padding(start = 100.dp, bottom = 100.dp)
-            .size(60.dp)
-            .background(Color.Red))
+                .background(Color.Yellow)
+        ) {
+
+        }
+        Column(modifier = Modifier.padding(start = 20.dp)) {
+            Box(
+                Modifier
+                    .width(250.dp)
+                    .height(30.dp)
+                    .background(Color.Green)
+            )
+            Box(
+                Modifier
+                    .padding(top = 10.dp)
+                    .width(150.dp)
+                    .height(30.dp)
+                    .background(Color.Red)
+            )
+        }
     }
 }
 
@@ -47,6 +60,6 @@ fun ColumnDemo() {
 @Composable
 fun DefaultPreview() {
     MyApplicationTheme(true) {
-        ColumnDemo()
+        MixDemo()
     }
 }
