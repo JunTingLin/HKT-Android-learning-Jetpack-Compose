@@ -3,14 +3,19 @@ package com.junting.myapplication
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Text
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.junting.myapplication.ui.theme.MyApplicationTheme
 
@@ -18,54 +23,72 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MixDemo()
+            CounterDemo()
         }
     }
 }
 
 @Composable
-fun MixDemo() {
+fun CounterDemo() {
+    var counter by remember { mutableStateOf(0) }
+
+
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
-
+            .fillMaxHeight()
     ) {
-        val (img, h1, h2) = createRefs()
-        Box(
-            modifier = Modifier
-                .size(100.dp)
-                .background(Color.Yellow)
-                .constrainAs(img) {
+        val (textCounter, btnMinus, btnPlus) = createRefs()
 
-                }
+        val topGuideline = createGuidelineFromTop(0.2f)
+        val buttomGuideline = createGuidelineFromBottom(0.2f)
 
-        )
-        Box(
-            modifier = Modifier
-                .width(250.dp)
-                .height(30.dp)
-                .background(Color.Green)
-                .constrainAs(h1) {
-                    top.linkTo(parent.top)
-                    bottom.linkTo(h2.top)
-                    start.linkTo(img.end,20.dp)
-
-                }
-        )
-        Box(modifier = Modifier
-            .width(150.dp)
-            .height(30.dp)
-            .background(Color.Red)
-            .constrainAs(h2) {
-                top.linkTo(h1.bottom)
-                bottom.linkTo(parent.bottom)
-                start.linkTo(h1.start)
-
-
+        Text(
+            text = "$counter",
+            fontSize = 100.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.constrainAs(textCounter) {
+                top.linkTo(topGuideline)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
             }
         )
 
+        Button(
+            colors = ButtonDefaults.textButtonColors(
+                backgroundColor = Color.Gray,
+                contentColor = Color.Black,
+            ),
+            border = BorderStroke(1.dp, Color.Black),
+            shape = RoundedCornerShape(0),
+            onClick = { counter++ },
+            modifier = Modifier
+                .constrainAs(btnPlus) {
+                    top.linkTo(buttomGuideline)
+                    start.linkTo(parent.start)
+                    end.linkTo(btnMinus.start)
+                }
+                .width(110.dp)) {
+            Text(text = "+1",fontSize = 40.sp)
+        }
+        Button(
+            colors = ButtonDefaults.textButtonColors(
+                backgroundColor = Color.Gray,
+                contentColor = Color.Black,
+            ),
+            border = BorderStroke(1.dp, Color.Black),
+            shape = RoundedCornerShape(0),
+            onClick = { counter-- },
+
+            modifier = Modifier
+                .constrainAs(btnMinus) {
+                    top.linkTo(buttomGuideline)
+                    start.linkTo(btnPlus.end)
+                    end.linkTo(parent.end)
+                }
+                .width(110.dp)) {
+            Text(text = "-1", fontSize = 40.sp)
+        }
     }
 }
 
@@ -74,6 +97,6 @@ fun MixDemo() {
 @Composable
 fun DefaultPreview() {
     MyApplicationTheme(true) {
-        MixDemo()
+        CounterDemo()
     }
 }
