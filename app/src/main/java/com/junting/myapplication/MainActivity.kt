@@ -3,16 +3,14 @@ package com.junting.myapplication
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,73 +21,85 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            CounterDemo()
+            BMIDemo()
         }
     }
 }
 
 @Composable
-fun CounterDemo() {
-    var counter by remember { mutableStateOf(0) }
-
+fun BMIDemo() {
+    var weight by remember { mutableStateOf("") }
+    var height by remember { mutableStateOf("") }
+    var bmi by remember { mutableStateOf("") }
 
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
     ) {
-        val (textCounter, btnMinus, btnPlus) = createRefs()
+        val (inputHeight, inputWeight, textResult, btnCal, btnClear) = createRefs()
 
-        val topGuideline = createGuidelineFromTop(0.2f)
-        val buttomGuideline = createGuidelineFromBottom(0.2f)
-
-        Text(
-            text = "$counter",
-            fontSize = 100.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.constrainAs(textCounter) {
-                top.linkTo(topGuideline)
+        TextField(
+            value = "$height",
+            onValueChange = { height = it },
+            singleLine = true,
+            label = { Text("身高(cm)") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.constrainAs(inputHeight) {
+                top.linkTo(parent.top,120.dp)
+                bottom.linkTo(inputWeight.top)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             }
         )
+        TextField(
+            value = "$weight",
+            onValueChange = { weight = it },
+            singleLine = true,
+            label = { Text("體重(kg)") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.constrainAs(inputWeight) {
+                top.linkTo(inputHeight.bottom)
+                bottom.linkTo(textResult.top)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            }
+        )
+        Text(
+            text = "結果:" + bmi ?: "",
+            fontSize = 30.sp,
+            modifier = Modifier.constrainAs(textResult) {
+                top.linkTo(inputWeight.bottom,120.dp)
+                bottom.linkTo(btnCal.top)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            })
 
-        Button(
-            colors = ButtonDefaults.textButtonColors(
-                backgroundColor = Color.Gray,
-                contentColor = Color.Black,
-            ),
-            border = BorderStroke(1.dp, Color.Black),
-            shape = RoundedCornerShape(0),
-            onClick = { counter++ },
-            modifier = Modifier
-                .constrainAs(btnPlus) {
-                    top.linkTo(buttomGuideline)
-                    start.linkTo(parent.start)
-                    end.linkTo(btnMinus.start)
-                }
-                .width(110.dp)) {
-            Text(text = "+1",fontSize = 40.sp)
+        Button(onClick = { bmi = calBMI(height.toDouble(), weight.toDouble()).toString() },
+            modifier = Modifier.constrainAs(btnCal) {
+                top.linkTo(textResult.bottom)
+                bottom.linkTo(parent.bottom)
+                start.linkTo(parent.start)
+                end.linkTo(btnClear.start)
+            }) {
+            Text(text = "計算", fontSize = 50.sp)
         }
-        Button(
-            colors = ButtonDefaults.textButtonColors(
-                backgroundColor = Color.Gray,
-                contentColor = Color.Black,
-            ),
-            border = BorderStroke(1.dp, Color.Black),
-            shape = RoundedCornerShape(0),
-            onClick = { counter-- },
+        Button(onClick = { weight = "";height = "";bmi = "" },
+            modifier = Modifier.constrainAs(btnClear) {
+                top.linkTo(textResult.bottom)
+                bottom.linkTo(parent.bottom)
+                start.linkTo(btnCal.end)
+                end.linkTo(parent.end)
+            }) {
+            Text(text = "清空", fontSize = 50.sp)
+        }
 
-            modifier = Modifier
-                .constrainAs(btnMinus) {
-                    top.linkTo(buttomGuideline)
-                    start.linkTo(btnPlus.end)
-                    end.linkTo(parent.end)
-                }
-                .width(110.dp)) {
-            Text(text = "-1", fontSize = 40.sp)
-        }
+
     }
+}
+
+fun calBMI(height: Double, weight: Double): Double {
+    return weight / Math.pow(height/100, 2.0)
 }
 
 
@@ -97,6 +107,6 @@ fun CounterDemo() {
 @Composable
 fun DefaultPreview() {
     MyApplicationTheme(true) {
-        CounterDemo()
+        BMIDemo()
     }
 }
