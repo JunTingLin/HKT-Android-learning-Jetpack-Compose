@@ -66,4 +66,9 @@ dependencies {
 
     //顯示網路圖片
     implementation "io.coil-kt:coil-compose:2.0.0-rc03"
+
+    //連線、解析json
+    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
+
 }
