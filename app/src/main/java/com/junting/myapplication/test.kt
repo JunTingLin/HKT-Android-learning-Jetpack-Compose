@@ -1,13 +1,24 @@
 package com.junting.myapplication
 
 fun main(){
-    var name = "jun1"
-    HelloContent2("tim",{a-> name=a;println(a) })
-    println(name)
+    val dog = Dog("junting",-50)
+    println(dog)
+    dog.weight = -80
+    println(dog)
 }
 
-fun HelloContent2(name: String, onNameChange: (String) -> Unit) {
-    println(name)
-    onNameChange("jun2")
+
+
+class Dog(val name:String,weight_param:Int){
+
+    var weight = weight_param
+        set(value){
+            if(value>0) field = value
+        }
+
+
+    override fun toString(): String {
+        return "Dog(name='$name', weight=$weight)"
+    }
 
 }
