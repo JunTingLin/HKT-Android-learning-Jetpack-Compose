@@ -1,99 +1,109 @@
 package com.junting.myapplication
 
-import android.content.Context
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.edit
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 
 class MainActivity : ComponentActivity() {
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
-        setContent {TopComposable()}
-
-
-    }
-
-}
-
-class MyViewModel(context: Context) : ViewModel() {
-    private val _sp = context.getSharedPreferences("my_sp_file", Context.MODE_PRIVATE)
-    private val _defaultCount = _sp.getInt("DEFAULT_COUNT", 0)
-    private val _count = MutableLiveData(_defaultCount)
-
-    val count: LiveData<Int>
-        get() = _count
-
-    fun addCount() {
-        val temp = _count.value?.plus(1)
-        _count.postValue(temp)
-        _sp.edit {
-            temp?.let { putInt("DEFAULT_COUNT", it) }
+        setContent {
+            Demo()
         }
     }
 }
 
-class MyViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
+sealed class Routes(val route: String) {
+    object APage : Routes("a_page")
+    object BPage : Routes("b_page")
+    object CPage : Routes("c_page")
+}
 
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return MyViewModel(context) as T
+@Composable
+fun Demo(startDestination: String = Routes.APage.route) {
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = startDestination
+    ) {
+        composable(
+            Routes.APage.route
+        ) {
+            APage(navController)
+        }
+
+        composable(
+            Routes.BPage.route
+        ) {
+            BPage(navController)
+        }
+
+        composable(
+            Routes.CPage.route
+        ) {
+            CPage(navController)
+        }
+    }
+
+}
+
+@Composable
+fun APage(navController: NavHostController) {
+    BasePage("A 頁面內容", "前往") {
+        navController.navigate(Routes.BPage.route)
     }
 }
 
 @Composable
-fun TopComposable() {
-    val context = LocalContext.current
-    val viewModel: MyViewModel = viewModel(factory = MyViewModelFactory(context))
-    val count by viewModel.count.observeAsState(0)
-
-//    val addCount = { viewModel.addCount() }
-//    Demo(count, addCount)
-//    Demo(count, addCount = { viewModel.addCount() })
-    Demo(count) {
-        viewModel.addCount()
+fun BPage(navController: NavHostController) {
+    BasePage("B 頁面內容", "前往") {
+        navController.navigate(Routes.CPage.route)
     }
 }
 
 @Composable
-fun Demo(count: Int, addCount: () -> Unit) {
+fun CPage(navController: NavHostController) {
+    BasePage("C 頁面內容", "返回") {
+        navController.navigateUp()
+    }
+}
+
+@Composable
+fun BasePage(pageContent: String, btnContent: String, onClick: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            "$count",
-            modifier = Modifier.padding(10.dp),
-            fontSize = 30.sp
+            text = pageContent,
+            fontSize = 30.sp,
+            modifier = Modifier.padding(bottom = 100.dp)
         )
         Button(
             modifier = Modifier
                 .width(150.dp)
                 .height(100.dp),
             onClick = {
-                addCount()
+                onClick()
             }
         ) {
-            Text("＋１")
+            Text(btnContent)
         }
     }
 }
-
